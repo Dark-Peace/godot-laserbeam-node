@@ -14,3 +14,5 @@ Features include (but are not limited to):
 
 
 Full documentation available [here](https://docs.google.com/document/d/1y2aPsn72dOxQ-wBNGqLlQvrw9-SV_z12a1MradBglF4/edit?usp=drivesdk)
+
+[](https://media.discordapp.net/attachments/854614504045019146/1097587599750729809/Godot_v4.0-stable_win64_l4RMatlyAB.gif?width=876&height=570)
