@@ -9,6 +9,7 @@ size = Vector2(10, 10)
 [node name="Laser" type="Area2D"]
 position = Vector2(169, 64)
 script = ExtResource("1_2i275")
+BOUNCE_OFFSET = 10.0
 
 [node name="RayCast2D" type="ShapeCast2D" parent="."]
 enabled = false
@@ -16,6 +17,7 @@ shape = SubResource("RectangleShape2D_p80dr")
 target_position = Vector2(80, 0)
 
 [node name="Line2D" type="Line2D" parent="."]
+points = PackedVector2Array(0, 0)
 default_color = Color(1, 0, 0, 1)
 joint_mode = 2
 
