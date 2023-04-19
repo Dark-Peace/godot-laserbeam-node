@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bk1xxjdlsbpmm"]
 
-[ext_resource type="Script" path="res://addons/BulletUpHell/BulletScene/LaserBeam.gd" id="1_2i275"]
+[ext_resource type="Script" path="res://addons/LaserBeam Node/LaserBeam.gd" id="1_2i275"]
 
 [node name="Laser" type="Area2D"]
 position = Vector2(169, 64)
