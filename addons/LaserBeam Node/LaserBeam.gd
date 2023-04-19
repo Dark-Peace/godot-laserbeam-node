@@ -1,4 +1,4 @@
-@icon("res://addons/LaserBeam Node/NodeIcons22.png")
+@icon("res://addons/BulletUpHell/Sprites/NodeIcons22.png")
 @tool
 extends Area2D
 class_name LaserBeam
@@ -170,7 +170,9 @@ func ray_cast():
 		make_ray($RayCast2D.target_position.x)
 	
 	$RayCast2D.enabled = false
-	if points.size() <= 1: return
+	if points.size() <= 1:
+		laser_built.emit()
+		return
 	if can_expand_width():
 		expand_width()
 		await tween.finished
