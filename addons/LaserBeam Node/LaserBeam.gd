@@ -9,7 +9,7 @@ signal laser_built
 
 const INFINITE:float = -1
 
-@export var button:bool = false : set = set_button
+#@export var button:bool = false : set = set_button
 @export var enabled:bool = true
 @export_range(0, 99999, 1.0, "suffix:px") var laser_length:float = 80 : set = set_laser_length
 @export_range(0, 99999, 1.0, "suffix:px") var laser_width:float = 16 : set = set_laser_width
