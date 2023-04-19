@@ -164,7 +164,7 @@ func ray_cast():
 		$RayCast2D.force_raycast_update()
 	
 	# if last laser segment doesnt hit a wall, still draw it
-	if can_end_midair and max_while < bounce_count:
+	if can_end_midair and (max_while < bounce_count or points.size() < 2):
 		if max_whole_length > 0: $RayCast2D.target_position.x = max_whole_length-current_length
 		points.append(($RayCast2D.target_position).rotated($RayCast2D.global_rotation)-global_position+$RayCast2D.global_position)
 		make_ray($RayCast2D.target_position.x)
