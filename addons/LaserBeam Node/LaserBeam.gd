@@ -1,4 +1,4 @@
-@icon("res://addons/BulletUpHell/Sprites/NodeIcons22.png")
+@icon("res://addons/LaserBeam Node/NodeIcons22.png")
 @tool
 extends Area2D
 class_name LaserBeam
