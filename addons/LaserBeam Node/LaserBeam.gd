@@ -8,7 +8,8 @@ signal ray_built
 
 const INFINITE:float = -1
 
-@export var button:bool = false : set = set_button
+#@export var button:bool = false : set = set_button
+@export var enabled:bool = true
 @export_range(0, 99999, 1.0, "suffix:px") var laser_length:float = 80 : set = set_laser_length
 @export_range(0, 99999, 1.0, "suffix:px") var laser_width:float = 16 : set = set_laser_width
 @export_range(-1, 99999, 1.0, "suffix:px") var max_whole_length:float = INFINITE
@@ -81,14 +82,15 @@ func _ready():
 	init_shapes()
 	reset_cast()
 
-#func _physics_process(delta):
-#	if update_cooldown == INFINITE: return
-#
-#	update_idx += delta
-#	if update_idx >= update_cooldown:
-##		print(update_idx)
-#		reset_cast()
-#		update_idx = 0
+func _physics_process(delta):
+	if not enabled: return
+	if update_cooldown == INFINITE: return
+
+	update_idx += delta
+	if update_idx >= update_cooldown:
+#		print(update_idx)
+		reset_cast()
+		update_idx = 0
 
 func init_shapes():
 	var shape:RectangleShape2D
@@ -98,7 +100,6 @@ func init_shapes():
 		Phys.area_add_shape(self.get_rid(), shape.get_rid(), Transform2D(0, Vector2(10,0)))
 
 func reset_cast():
-	print($Line2D.get_point_count())
 	current_duration = 0
 	set_laser_length(laser_length)
 	$Line2D.clear_points()
@@ -114,6 +115,7 @@ func ray_cast():
 	$RayCast2D.position = Vector2.ZERO
 	$RayCast2D.enabled = true
 	points.append(Vector2.ZERO)
+	$Line2D.add_point(Vector2.ZERO)
 	
 	# cast to get the laser endpoint
 	$RayCast2D.force_shapecast_update()
@@ -128,7 +130,7 @@ func ray_cast():
 		angle = $RayCast2D.get_collision_normal(col_count)
 		ray_length = $RayCast2D.target_position.x#$RayCast2D.global_position.distance_to(pos)
 		points.append(pos-global_position)
-		collided.emit(pos-global_position, $RayCast2D.get_collider(), angle)
+		collided.emit(pos-global_position, $RayCast2D.get_collider(col_count), angle)
 		
 		if max_whole_length > 0:
 			current_length += ray_length
@@ -154,7 +156,8 @@ func ray_cast():
 		make_ray($RayCast2D.target_position.x)
 	
 	$RayCast2D.enabled = false
-	if points.size() > 1 and can_expand_width():
+	if points.size() <= 1: return
+	if can_expand_width():
 		expand_width()
 		await tween.finished
 	
@@ -169,12 +172,12 @@ func can_bounce_on(collider:Node):
 func make_ray(ray_length:float):
 	if points.size() <= 1: return
 	
-	var p_idx:int = $Line2D.get_point_count()
-	var start_pos:Vector2 = $Line2D.get_point_position(p_idx-1)
-	var angle:float = start_pos.angle_to_point($Line2D.get_point_position(p_idx))
+	var p_idx:int = points.size()-1#$Line2D.get_point_count()
+	var start_pos:Vector2 = points[p_idx-1]#$Line2D.get_point_position(p_idx)
+	print(points, points[p_idx], start_pos)
 	if expand_on == SPEED.None:#speed <= 0:
 		# instantly build the ray (laser segment)
-		$Line2D.add_point(points[-1])
+		$Line2D.add_point(points[p_idx])
 		# setup the ray's collision shape
 		
 #		var curr_shape:RectangleShape2D = shapes[p_idx-1]
@@ -195,9 +198,11 @@ func make_ray(ray_length:float):
 		$Line2D.add_point(points[-1])
 	
 	# move collision shape at right place
+	var angle:float = start_pos.angle_to_point($Line2D.get_point_position(p_idx))
 	Phys.area_set_shape_transform(self.get_rid(), p_idx-1, Transform2D(angle, start_pos+(Vector2(10,0)).rotated(angle)))
 	
 	ray_is_built(p_idx-1)
+	print(current_duration > max_shot_duration)
 	return (current_duration > max_shot_duration)
 	
 func build_ray(new_pos:Vector2, idx:int):
@@ -244,11 +249,11 @@ func end_cast():
 
 
 func _on_area_shape_entered(area_rid, area, area_shape_index, local_shape_index):
-	Spawning.bullet_collide_area(area_rid, area, area_shape_index, local_shape_index, self)
+#	Spawning.bullet_collide_area(area_rid, area, area_shape_index, local_shape_index, self)
 	hit(area)
 
 func _on_body_shape_entered(body_rid, body, body_shape_index, local_shape_index):
-	Spawning.bullet_collide_body(body_rid, body, body_shape_index, local_shape_index, self)
+#	Spawning.bullet_collide_body(body_rid, body, body_shape_index, local_shape_index, self)
 	hit(body)
 
 func hit(collider):
